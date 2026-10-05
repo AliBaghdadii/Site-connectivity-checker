@@ -9,12 +9,10 @@ def normalize_url(user_input: str) -> str:
     Returns:
         (str): _description_
     """
-    if type(user_input) != str:
+    if not isinstance(user_input, str):
         raise ValueError("The input must be a string.")
 
-    user_input.replace(" ", "")
-    user_input.replace("\t", "")
-    user_input.replace("\n", "")
+    user_input.strip()
 
-def scheme_detect(user_input: str):
+def has_scheme(user_input: str):
     pass
