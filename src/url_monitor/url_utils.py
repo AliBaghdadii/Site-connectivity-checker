@@ -1,4 +1,6 @@
 from urllib.parse import urlsplit, urlunsplit
+import ipaddress
+
 
 def normalize_url(user_input: str) -> str:
     """It returns a normalized URL. If no scheme is provided, HTTPS is used.
@@ -9,7 +11,7 @@ def normalize_url(user_input: str) -> str:
         user_input (str): a string containing a user-provided website address
 
     Returns:
-        (str): _description_
+        The normalized url.
     """
     if not isinstance(user_input, str):
         raise TypeError("The input must be a string.")
@@ -42,6 +44,20 @@ def normalize_url(user_input: str) -> str:
     host = host.lower()
     if host.startswith("www."):
         host = host[4:]
+
+    try:
+        ipaddress.ip_address(host)
+    except ValueError:
+        # Not an IP address: require a dotted hostname with valid labels.
+        labels = host.split(".")
+        if len(labels) < 2 or any(
+            not label
+            or label.startswith("-")
+            or label.endswith("-")
+            or not label.replace("-", "").isalnum()
+            for label in labels
+        ):
+            raise ValueError("Invalid hostname")
 
     if not host:
         raise ValueError("URL has no host after removing www.")
