@@ -1,0 +1,33 @@
+It returns a normalized URL. If no scheme is provided, HTTPS is used.
+    Explicit HTTP/HTTPS schemes are preserved. www. is removed. Trailing slashes are removed.
+    Invalid URLs raise ValueError.
+
+def normalize_url(raw):
+    if not isinstance(raw, str) or not raw.strip():
+        raise ValueError("URL must be a non-empty string")
+
+    raw = raw.strip()
+
+    if not has_scheme(raw):
+        raw = "https://" + raw
+
+    parts = parse(raw)
+
+    if parts.scheme.lower() not in {"http", "https"}:
+        raise ValueError("Only http and https are supported")
+
+    host = parts.hostname
+    if not host:
+        raise ValueError("URL has no host")
+
+    host = host.lower()
+    if host.startswith("www."):
+        host = host[4:]
+    if not host:
+        raise ValueError("URL has no host after removing www.")
+
+    path = normalize_path(parts.path)   # your trailing-slash rule here
+
+    return rebuild(parts.scheme.lower(), host, parts.port, path, parts.query, parts.fragment)
+
+has_scheme, normalize_path, and rebuild are three tiny helpers. If you find they’re one-liners, inline them — don’t over-abstract.

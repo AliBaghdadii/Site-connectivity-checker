@@ -1,3 +1,5 @@
+this is what i wrote in src/url_monitor/url_utils.py:
+```
 from urllib.parse import urlsplit, urlunsplit
 
 def normalize_url(user_input: str) -> str:
@@ -12,11 +14,9 @@ def normalize_url(user_input: str) -> str:
         (str): _description_
     """
     if not isinstance(user_input, str):
-        raise TypeError("The input must be a string.")
+        raise ValueError("The input must be a string.")
 
-    user_input = user_input.strip() # For removing whitespaces, newlines, tabs and etc.
-    if not user_input:
-        raise ValueError("URL must be a non-empty string")
+    user_input.strip() # For removing whitespaces, newlines, tabs and etc.
 
     if "://" not in user_input:
         user_input = "https://" + user_input
@@ -46,9 +46,10 @@ def normalize_url(user_input: str) -> str:
     if not host:
         raise ValueError("URL has no host after removing www.")
 
-    path = parts.path.rstrip("/")
+    # Preserve the root URL as "/" while removing other trailing slashes.
+    path = parts.path.rstrip("/") or "/"
 
-    # urlsplit.hostname omits brackets around IPv6 addresses.
+    # urlsplit.hostname omits brackets, so restore them for IPv6 addresses.
     if ":" in host and not host.startswith("["):
         host = f"[{host}]"
 
@@ -61,3 +62,4 @@ def normalize_url(user_input: str) -> str:
         parts.query,
         parts.fragment
     ))
+```
