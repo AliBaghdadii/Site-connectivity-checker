@@ -1,5 +1,5 @@
 import pytest
-from src.url_monitor.url_utils import normalize_url
+from url_monitor.url_utils import normalize_url
 
 
 @pytest.mark.parametrize(
